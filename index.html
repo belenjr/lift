@@ -156,7 +156,6 @@
 					setTimeout( arguments.callee, 1000 );
 					elem.innerHTML = floor_start;
 				}
-				var stopFloor = undefined;
 			}
 			
 			//	Продолжаем движение лифта вниз после остановки
@@ -170,7 +169,6 @@
 					setTimeout( arguments.callee, 1000 );
 					elem.innerHTML = floor_start;
 				}
-				var stopFloor = undefined;
 			}
 			
 			//	Завершаем движение лифта
@@ -179,6 +177,7 @@
 				arrow.innerHTML = '';
 				block_outside = 0;
 				$('.buttons_inside .buttons div').removeClass('pushed');
+				setTimeout(stopFloor = undefined, 500);
 			}
 			
 			function goNextUp2() {
@@ -277,6 +276,7 @@
 										open();
 										if (stopFloor !== undefined) {
 											setTimeout(finish2, 1000);
+											
 										}
 										else {
 											setTimeout(finish, 1000);
@@ -318,6 +318,7 @@
 										open();
 										if (stopFloor !== undefined) {
 											setTimeout(finish2, 1000);
+											
 										}
 										else {
 											setTimeout(finish, 1000);
@@ -392,6 +393,7 @@
 											arrow.innerHTML = ' &larr; &rarr;';
 											if (stopFloor !== undefined) {
 												setTimeout(finish2, 1000);
+												
 											}
 											else {
 												setTimeout(finish, 1000);
@@ -423,6 +425,7 @@
 											arrow.innerHTML = ' &larr; &rarr;';
 											if (stopFloor !== undefined) {
 												setTimeout(finish2, 1000);
+												
 											}
 											else {
 												setTimeout(finish, 1000);
