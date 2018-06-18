@@ -116,40 +116,38 @@
 			
 			//	Закрытие дверей
 			function close() {
-				console.log('func close');
+				console.log('close on the ' + i + ' floor');
 				arrow.innerHTML = '&rarr; &larr;';
 			}
 			
 			//	Открытие дверей
 			function open() {
-				console.log('func open');
+				console.log('open on the ' + (i-1) + ' floor');
 				arrow.innerHTML = '&larr; &rarr;';
 				setTimeout(empty, 1000);
 			}
 			
 			//	Двери открыты
 			function empty() {
-				console.log('func empty');
+				console.log('opened on the ' + (i-1) + ' floor');
 				arrow.innerHTML = '';
 			}
 			
 			//	Направление ВВЕРХ
 			function up() {
-				console.log('func up');
-				console.log('stopFloor: ' + stopFloor);
+				console.log('up: ' + (i-1) + ' -> ' + i + '. stopFloor: ' + stopFloor + '');
 				arrow.innerHTML = '&uarr;';
 			}
 			
 			//	Направление ВНИЗ
 			function down() {
-				console.log('func down');
-				console.log('stopFloor: ' + stopFloor);
+				console.log('down: ' + (i) + ' -> ' + (i-1) + '. stopFloor: ' + stopFloor + '');
 				arrow.innerHTML = '&darr;';
 			}
 			
 			//	Продолжаем движение лифта вверх после остановки
 			function goNextUp() {
-				console.log('func goNextUp');
+				console.log('goNextUp');
 				floor_start = parseInt($('.state .floor').html());
 				setTimeout( open, (floor_end-floor_start)*1000 );
 				setTimeout( finish, (floor_end-floor_start+1)*1000 );
@@ -158,11 +156,12 @@
 					setTimeout( arguments.callee, 1000 );
 					elem.innerHTML = floor_start;
 				}
+				var stopFloor = undefined;
 			}
 			
 			//	Продолжаем движение лифта вниз после остановки
 			function goNextDown() {
-				console.log('func goNextDown');
+				console.log('goNextDown');
 				floor_start = parseInt($('.state .floor').html());
 				setTimeout( open, (floor_start-floor_end)*1000 );
 				setTimeout( finish, (floor_start-floor_end+1)*1000 );
@@ -171,18 +170,19 @@
 					setTimeout( arguments.callee, 1000 );
 					elem.innerHTML = floor_start;
 				}
+				var stopFloor = undefined;
 			}
 			
 			//	Завершаем движение лифта
 			function finish() {
-				console.log('func finish');
+				console.log('finish');
 				arrow.innerHTML = '';
 				block_outside = 0;
 				$('.buttons_inside .buttons div').removeClass('pushed');
 			}
 			
 			function goNextUp2() {
-				console.log('func goNextUp2');
+				console.log('goNextUp2');
 				floor_start = parseInt($('.state .floor').html());
 				setTimeout( open, (stopFloor-floor_start)*1000 );
 				setTimeout( finish, (stopFloor-floor_start+1)*1000 );
@@ -193,7 +193,7 @@
 				}
 			}
 			function goNextDown2() {
-				console.log('func goNextDown2');
+				console.log('goNextDown2');
 				floor_start = parseInt($('.state .floor').html());
 				setTimeout( open, (floor_start-stopFloor)*1000 );
 				setTimeout( finish, (floor_start-stopFloor+1)*1000 );
@@ -206,7 +206,7 @@
 			
 			// Отправляем лифт на этаж, который не входил в маршрут движении лифта
 			function finish2() {
-					console.log('func finish2');
+					console.log('finish2');
 					
 					floor_start = parseInt($('.state .floor').html());
 					
@@ -284,8 +284,8 @@
 									}
 									
 									// остановка лифта в движении, если вызван с этажа
-									else if ( i == stopFloor ) {
-										elem.innerHTML = i;
+									else if ( i == stopFloor+1 ) {
+										elem.innerHTML = i-1;
 										open();	// Двери открываются
 										setTimeout( empty, 1000 );	// Двери открылись
 										setTimeout( close, 6000 );	// Двери закрылись
