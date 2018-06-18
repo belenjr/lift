@@ -109,42 +109,41 @@
 		<script>
 		
 		$(document).ready(function(){
-			
+		
+			var arrow = document.getElementById( 'arrow' );
 			var stopFloor;
-			block_outside = 0;
+			var block_outside = 0;
 			
 			//	Закрытие дверей
 			function close() {
 				console.log('func close');
-				arrow = document.getElementById( 'arrow' );
 				arrow.innerHTML = '&rarr; &larr;';
 			}
 			
 			//	Открытие дверей
 			function open() {
 				console.log('func open');
-				arrow = document.getElementById( 'arrow' );
 				arrow.innerHTML = '&larr; &rarr;';
+				setTimeout(empty, 1000);
 			}
 			
 			//	Двери открыты
 			function empty() {
 				console.log('func empty');
-				arrow = document.getElementById( 'arrow' );
 				arrow.innerHTML = '';
 			}
 			
 			//	Направление ВВЕРХ
 			function up() {
 				console.log('func up');
-				arrow = document.getElementById( 'arrow' );
+				console.log(stopFloor);
 				arrow.innerHTML = '&uarr;';
 			}
 			
 			//	Направление ВНИЗ
 			function down() {
 				console.log('func down');
-				arrow = document.getElementById( 'arrow' );
+				console.log(stopFloor);
 				arrow.innerHTML = '&darr;';
 			}
 			
@@ -177,19 +176,29 @@
 			//	Завершаем движение лифта
 			function finish() {
 				console.log('func finish');
-				arrow = document.getElementById( 'arrow' );
 				arrow.innerHTML = '';
 				block_outside = 0;
 				$('.buttons_inside .buttons div').removeClass('pushed');
 			}
 			
 			function goNextUp2() {
-				console.log('func goNextUp');
+				console.log('func goNextUp2');
 				floor_start = parseInt($('.state .floor').html());
 				setTimeout( open, (stopFloor-floor_start)*1000 );
 				setTimeout( finish, (stopFloor-floor_start+1)*1000 );
 				
 				if ( ++floor_start <= stopFloor ) {
+					setTimeout( arguments.callee, 1000 );
+					elem.innerHTML = floor_start;
+				}
+			}
+			function goNextDown2() {
+				console.log('func goNextDown2');
+				floor_start = parseInt($('.state .floor').html());
+				setTimeout( open, (floor_start-stopFloor)*1000 );
+				setTimeout( finish, (floor_start-stopFloor+1)*1000 );
+				
+				if ( --floor_start >= stopFloor ) {
 					setTimeout( arguments.callee, 1000 );
 					elem.innerHTML = floor_start;
 				}
@@ -210,11 +219,12 @@
 						setTimeout( goNextUp2, 6000 );
 					}
 					// Если нужно продолжить движение вниз
-					/*else {
+					else {
 						console.log('floor_start > stopFloor : ' + floor_start + ' > ' + stopFloor);
-						setTimeout( down, 5000 );
-						setTimeout( goNextDown, 6000 );
-					}*/
+						setTimeout( close, 5000 );
+						setTimeout( down, 6000 );
+						setTimeout( goNextDown2, 6000 );
+					}
 			}
 			
 			
@@ -247,7 +257,6 @@
 					// Движение лифта
 					(function() {
 						elem = document.getElementById( 'floor' );
-						arrow = document.getElementById( 'arrow' );
 						return function() {
 							
 							// Если лифт едет вверх
@@ -266,7 +275,12 @@
 									else if ( i == floor_end+1 ) {
 										elem.innerHTML = i-1;
 										open();
-										setTimeout(finish, 1000);
+										if (stopFloor !== undefined) {
+											setTimeout(finish2, 1000);
+										}
+										else {
+											setTimeout(finish, 1000);
+										}
 									}
 									
 									// остановка лифта в движении, если вызван с этажа
@@ -361,7 +375,6 @@
 						
 						(function() {
 							elem = document.getElementById( 'floor' );
-							arrow = document.getElementById( 'arrow' );
 							return function() {
 							
 								// Лифт едет вверх
