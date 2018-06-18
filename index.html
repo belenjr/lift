@@ -71,7 +71,7 @@
 				<legend>Информационное табло</legend>
 				
 				<div class="state">
-					<span class="floor" id="floor">4</span>
+					<span class="floor" id="floor">1</span>
 					<span class="arrow" id="arrow"></span>
 				</div>
 				
@@ -113,13 +113,6 @@
 			var stopFloor;
 			block_outside = 0;
 			
-			function finish() {
-				console.log('finish');
-				arrow = document.getElementById( 'arrow' );
-				arrow.innerHTML = '';
-				block_outside = 0;
-				$('.buttons_inside .buttons div').removeClass('pushed');
-			}
 			function close() {
 				console.log('close');
 				arrow = document.getElementById( 'arrow' );
@@ -169,6 +162,27 @@
 				}
 			}
 			
+			function finish() {
+				console.log('finish');
+				arrow = document.getElementById( 'arrow' );
+				arrow.innerHTML = '';
+				block_outside = 0;
+				$('.buttons_inside .buttons div').removeClass('pushed');
+				console.log(stopFloor);
+				if (stopFloor !== undefined) {
+					floor_start = parseInt($('.state .floor').html());
+					if (floor_start < stopFloor) {
+						setTimeout( up, 5000 );
+						setTimeout( goNextUp, 6000 );
+					}
+					else {
+						setTimeout( down, 5000 );
+						setTimeout( goNextDown, 6000 );
+						var stopFloor;
+					}
+				}
+			}
+			
 			// Действия при нажатии на кнопку этажа (в лифте)
 			$('.buttons_inside .buttons div').on('click', function() {
 					
@@ -198,7 +212,7 @@
 							elem = document.getElementById( 'floor' );
 							arrow = document.getElementById( 'arrow' );
 						return function() {
-						
+							console.log(stopFloor);
 							// Лифт едет вверх
 							if (diff_floors > 0) {
 								
@@ -308,6 +322,7 @@
 						(function() {
 								elem = document.getElementById( 'floor' );
 							return function() {
+							console.log(stopFloor);
 							
 							
 								// Лифт едет вверх
