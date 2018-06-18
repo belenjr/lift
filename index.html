@@ -1,0 +1,383 @@
+<html>
+
+	<head>
+		
+		<style>
+			.buttons_inside {
+				float: left;
+			}
+			
+			.buttons_inside .buttons {
+				width: 60px;
+			}
+			
+			.buttons_inside .buttons div {
+				width: 21px;
+				margin: 3px;
+				float: left;
+				border: 1px solid #000;
+				text-align: center;
+				cursor: pointer;
+			}
+			
+			.buttons_inside .buttons div.pushed {
+				background: #c6c6c6;
+				color: #fff;
+			}
+			
+			.inform_table {
+				float: right;
+			}
+			
+			.inform_table .floor {
+				background: #000;
+				color: #fff;
+				padding: 6px 12px;
+			}
+			.inform_table .arrow {
+				border: 1px solid #000;
+				padding: 6px 12px;
+			}
+			
+			
+			.buttons_inside, .inform_table {
+				width: 48%;
+			}
+		</style>
+		
+	</head>
+
+	<body>
+		
+			<fieldset class="buttons_inside">
+				<legend>Кабина лифта (Панель кнопок)</legend>
+				
+				<div class="buttons">
+					<div id="1">1</div><div id="11">11</div>
+					<div id="2">2</div><div id="12">12</div>
+					<div id="3">3</div><div id="13">13</div>
+					<div id="4">4</div><div id="14">14</div>
+					<div id="5">5</div><div id="15">15</div>
+					<div id="6">6</div><div id="16">16</div>
+					<div id="7">7</div><div id="17">17</div>
+					<div id="8">8</div><div id="18">18</div>
+					<div id="9">9</div><div id="19">19</div>
+					<div id="10">10</div><div id="20">20</div>
+				</div>
+				
+			</fieldset>
+			
+			<fieldset class="inform_table">
+				<legend>Информационное табло</legend>
+				
+				<div class="state">
+					<span class="floor" id="floor">4</span>
+					<span class="arrow" id="arrow"></span>
+				</div>
+				
+			</fieldset>
+			
+			<fieldset class="callFromFloor">
+				<legend>Вызов с этажей</legend>
+				
+				<button class="1">1</button>
+				<button class="2">2</button>
+				<button class="3">3</button>
+				<button class="4">4</button>
+				<button class="5">5</button>
+				<button class="6">6</button>
+				<button class="7">7</button>
+				<button class="8">8</button>
+				<button class="9">9</button>
+				<button class="10">10</button>
+				<button class="11">11</button>
+				<button class="12">12</button>
+				<button class="13">13</button>
+				<button class="14">14</button>
+				<button class="15">15</button>
+				<button class="16">16</button>
+				<button class="17">17</button>
+				<button class="18">18</button>
+				<button class="19">19</button>
+				<button class="20">20</button>
+				
+			</fieldset>
+			
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+		
+		<script>
+		
+		$(document).ready(function(){
+			
+			var stopFloor;
+			block_outside = 0;
+			
+			function finish() {
+				console.log('finish');
+				arrow = document.getElementById( 'arrow' );
+				arrow.innerHTML = '';
+				block_outside = 0;
+				$('.buttons_inside .buttons div').removeClass('pushed');
+			}
+			function close() {
+				console.log('close');
+				arrow = document.getElementById( 'arrow' );
+				arrow.innerHTML = '&rarr; &larr;';
+			}
+			function open() {
+				console.log('open');
+				arrow = document.getElementById( 'arrow' );
+				arrow.innerHTML = '&larr; &rarr;';
+			}
+			function empty() {
+				console.log('empty');
+				arrow = document.getElementById( 'arrow' );
+				arrow.innerHTML = '';
+			}
+			function up() {
+				console.log('up');
+				arrow = document.getElementById( 'arrow' );
+				arrow.innerHTML = '&uarr;';
+			}
+			function down() {
+				console.log('down');
+				arrow = document.getElementById( 'arrow' );
+				arrow.innerHTML = '&darr;';
+			}
+			
+			function goNextUp() {
+				console.log('goNextUp');
+				floor_start = parseInt($('.state .floor').html());
+				setTimeout( open, (floor_end-floor_start)*1000 );
+				setTimeout( finish, (floor_end-floor_start+1)*1000 );
+				
+				if ( ++floor_start <= floor_end ) {
+					setTimeout( arguments.callee, 1000 );
+					elem.innerHTML = floor_start;
+				}
+			}
+			function goNextDown() {
+				console.log('goNextDown');
+				floor_start = parseInt($('.state .floor').html());
+				setTimeout( open, (floor_start-floor_end)*1000 );
+				setTimeout( finish, (floor_start-floor_end+1)*1000 );
+				
+				if ( --floor_start >= floor_end ) {
+					setTimeout( arguments.callee, 1000 );
+					elem.innerHTML = floor_start;
+				}
+			}
+			
+			// Действия при нажатии на кнопку этажа (в лифте)
+			$('.buttons_inside .buttons div').on('click', function() {
+					
+				if (block_outside == 0) {
+				
+					block_outside = 1;
+					
+					// Отменяем нажатие всех кнопок (в лифте)
+					$('.buttons_inside .buttons div').removeClass('pushed');
+					
+					// Определяем, на какоим этаже стоит лифт
+					floor_start = parseInt($('.state .floor').html());
+					
+					// Определяем номер этажа нажатой кнопки (в лифте)
+					floor_end = parseInt($(this).attr("id"));
+
+					// Подсвечиваем нажатую кнопку (в лифте)
+					$(this).addClass('pushed');
+					
+					// Определяем, вверх или вниз должен ехать лифт
+					var diff_floors = Math.sign(floor_end-floor_start);
+					if (diff_floors > 0) { i = floor_start-1;	}
+					else if (diff_floors < 0) {	i = floor_start+1; }
+					if (floor_start == floor_end) {	block_outside = 0; }
+					
+					(function() {
+							elem = document.getElementById( 'floor' );
+							arrow = document.getElementById( 'arrow' );
+						return function() {
+						
+							// Лифт едет вверх
+							if (diff_floors > 0) {
+								
+								if ( ++i <= floor_end+1 ) {
+									
+									// Стартует
+									if ( i == floor_start ) {
+										// Закрываем двери
+										close();
+										// Один этаж едет 1 секунду
+										setTimeout( arguments.callee, 1000 );
+										elem.innerHTML = i;
+									}
+									else if ( i == floor_end+1 ) {
+										elem.innerHTML = i-1;
+										open();
+										setTimeout(finish, 1000);
+									}
+									
+									// Вызываем лифт с этажа во время передвижения
+									else if ( i == stopFloor ) {
+										elem.innerHTML = i;
+										open();	// Двери открываются
+										setTimeout( empty, 1000 );	// Двери открылись
+										setTimeout( close, 6000 );
+										setTimeout( up, 7000 );
+										setTimeout( goNextUp, 7000);
+										stopFloor = '';
+									}
+									else {
+										setTimeout( arguments.callee, 1000 );
+										elem.innerHTML = i;
+										up();
+									}
+									
+								}
+								
+							}
+							
+							
+							// Лифт едет вниз
+							else if (diff_floors < 0) {
+							
+								if ( --i >= floor_end-1 ) {
+								
+									if ( i == floor_start ) {
+										setTimeout( arguments.callee, 1000 );
+										elem.innerHTML = i;
+										close();
+									}
+									else if ( i == floor_end-1 ) {
+										elem.innerHTML = i+1;
+										open();
+										setTimeout(finish, 1000);
+									}
+									else if ( i == stopFloor ) {
+										elem.innerHTML = i;
+										open();	// Двери открываются
+										setTimeout( empty, 1000 );	// Двери открылись
+										setTimeout( close, 6000 );
+										setTimeout( down, 7000 );
+										setTimeout( goNextDown, 7000);
+										console.log(i);
+										console.log(stopFloor);
+									}
+									else {
+										setTimeout( arguments.callee, 1000 );
+										elem.innerHTML = i;
+										down();
+									}
+									
+								}
+								
+							}
+							
+						}();
+					})();
+				}
+			});
+			
+			
+			// Действия при нажатии на кнопку (на этаже)
+			$('.callFromFloor button').on('click', function() {
+			
+				stopFloor = $(this).attr("class");
+			
+				if (block_outside == 0) {
+				
+						block_outside = 1;
+					
+						floor_start = parseInt($('.state .floor').html());
+						callFloor = parseInt($(this).attr("class"));
+						
+						var diff_floors = Math.sign(callFloor-floor_start);
+						
+						if (diff_floors > 0) {
+							i = floor_start-1;
+						}
+						else if (diff_floors < 0) {
+							i = floor_start+1;
+						}
+					
+						if (floor_start == callFloor) {
+							block_outside = 0;
+						}
+						
+						(function() {
+								elem = document.getElementById( 'floor' );
+							return function() {
+							
+							
+								// Лифт едет вверх
+								if (diff_floors > 0) {
+
+									if ( ++i <= callFloor+1 ) {
+											
+										if ( i == floor_start ) {
+											setTimeout( arguments.callee, 1000 );
+											elem.innerHTML = i;
+											arrow.innerHTML = ' &rarr; &larr;';
+										}
+										else if ( i == callFloor+1 ) {
+											elem.innerHTML = i-1;
+											arrow.innerHTML = ' &larr; &rarr;';
+											// Двери открываются 1с (1000 мс)
+											setTimeout(finish, 1000);
+										}
+										else if ( i == stopFloor ) {
+											console.log(stopFloor);
+										}
+										else {
+											// Лифт едет 1с за 1 эт. (1000 мс)
+											setTimeout( arguments.callee, 1000 );
+											elem.innerHTML = i;
+											arrow.innerHTML = ' &uarr;';
+										}
+										
+									}
+									
+								}
+								
+								
+								// Лифт едет вниз
+								else if (diff_floors < 0) {
+								
+									if ( --i >= callFloor-1 ) {
+									
+										if ( i == floor_start ) {
+											setTimeout( arguments.callee, 1000 );
+											elem.innerHTML = i;
+											arrow.innerHTML = ' &rarr; &larr;';
+										}
+										else if ( i == callFloor-1 ) {
+											elem.innerHTML = i+1;
+											arrow.innerHTML = ' &larr; &rarr;';
+											setTimeout(finish, 1000);
+										}
+										else if ( i == stopFloor ) {
+											console.log(stopFloor);
+										}
+										else {
+											setTimeout( arguments.callee, 1000 );
+											elem.innerHTML = i;
+											arrow.innerHTML = ' &darr;';
+										}
+										
+									}
+									
+								}
+								
+							}();
+						})();
+				
+				}
+			});
+		
+		});
+		</script>
+		
+	</body>	
+	
+</html>
